@@ -1,0 +1,19 @@
+type Vault @entity {
+  id: ID! # Vault Address
+  nftContract: Bytes! # NFT Contract Address
+  vaultAddress: Bytes! # Vault Address
+}
+
+type TokenHolder @entity {
+  id: ID! # User Address
+  vault: Vault! # Associated Vault
+  balance: BigInt! # ERC20 Token Balance
+}
+
+type NFT @entity {
+  id: ID! # Unique NFT ID (e.g., "VaultAddress-TokenID")
+  vault: Bytes # Associated Vault
+  tokenId: BigInt! # NFT Token ID
+  owner: Bytes! # Current Owner
+  contract: Bytes! # Address of the NFT contract
+}

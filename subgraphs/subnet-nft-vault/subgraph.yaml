@@ -1,0 +1,77 @@
+specVersion: 0.0.4
+description: Subgraph for Subnet NFT Vault
+repository: "https://github.com/your-repo"
+
+schema:
+  file: ./schema.graphql
+
+dataSources:
+  - kind: ethereum/contract
+    name: NFTContract
+    network: mainnet # hoặc mạng của bạn
+    source:
+      address: "0x9CEb5fBb9734aC71F365d7cc0EedA48bB9763891" # Địa chỉ hợp đồng NFT
+      abi: ERC721
+      startBlock: 43867666 # Block triển khai
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - NFT
+      abis:
+        - name: ERC721
+          file: ./abis/ERC721.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,indexed uint256)
+          handler: handleTransfer
+      file: ./mappings/nft-contract.ts
+  - kind: ethereum/contract
+    name: SubnetNftVaultFactory
+    network: mainnet # hoặc mạng của bạn
+    source:
+      address: "0xA69e8B32E1B508aa79ada9d3bd34607fF6bE74aA"
+      abi: SubnetNftVaultFactory
+      startBlock: 44061288 # Block triển khai
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Vault
+      abis:
+        - name: SubnetNftVaultFactory
+          file: ./abis/SubnetNftVaultFactory.json
+        - name: SubnetNftVault
+          file: ./abis/SubnetNftVault.json
+      eventHandlers:
+        - event: VaultCreated(indexed address,address)
+          handler: handleVaultCreated
+      file: ./mappings/subnet-nft-vault-factory.ts
+
+# templates:
+#   - kind: ethereum/contract
+#     name: SubnetNftVault
+#     network: mainnet
+#     source:
+#       abi: SubnetNftVault
+#     mapping:
+#       kind: ethereum/events
+#       apiVersion: 0.0.6
+#       language: wasm/assemblyscript
+#       entities:
+#         - NFT
+#         - TokenHolder
+#       abis:
+#         - name: SubnetNftVault
+#           file: ./abis/SubnetNftVault.json
+#       eventHandlers:
+#         - event: Locked(indexed address,indexed uint256)
+#           handler: handleLocked
+#         - event: Redeemed(indexed address,indexed uint256)
+#           handler: handleRedeemed
+#         - event: LockedBatch(indexed address,uint256[])
+#           handler: handleLockedBatch
+#         - event: RedeemedBatch(indexed address,uint256[])
+#           handler: handleRedeemedBatch
+#       file: ./mappings/subnet-nft-vault.ts

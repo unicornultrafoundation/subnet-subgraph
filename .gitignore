@@ -11,3 +11,9 @@
 
 #!.yarn/cache
 .pnp.*
+node_modules
+.turbo
+.yarn
+# GraphQL directories
+build/
+generated/
