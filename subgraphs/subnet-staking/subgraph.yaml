@@ -1,0 +1,49 @@
+specVersion: 0.0.4
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: SubnetStakingPoolFactory
+    network: mainnet
+    source:
+      address: "0xaDD9cF84389087cd366EbA7a54703a902Ca72863"
+      abi: SubnetStakingPoolFactory
+      startBlock: 44065532
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Pool
+      abis:
+        - name: SubnetStakingPoolFactory
+          file: ./abis/SubnetStakingPoolFactory.json
+      eventHandlers:
+        - event: PoolCreated(indexed address,indexed address,address)
+          handler: handlePoolCreated
+      file: ./mappings/factory.ts
+templates:
+  - kind: ethereum/contract
+    name: SubnetStakingPool
+    network: mainnet
+    source:
+      abi: SubnetStakingPool
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - User
+        - UserPool
+        - History
+      abis:
+        - name: SubnetStakingPool
+          file: ./abis/SubnetStakingPool.json
+      eventHandlers:
+        - event: Staked(indexed address,uint256)
+          handler: handleStake
+        - event: Withdrawn(indexed address,uint256)
+          handler: handleWithdraw
+        - event: RewardClaimed(indexed address,uint256)
+          handler: handleClaim
+      file: ./mappings/staking-pool.ts

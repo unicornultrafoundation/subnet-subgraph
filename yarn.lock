@@ -6091,6 +6091,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"subnet-staking@workspace:subgraphs/subnet-staking":
+  version: 0.0.0-use.local
+  resolution: "subnet-staking@workspace:subgraphs/subnet-staking"
+  languageName: unknown
+  linkType: soft
+
 "subnet-subgraph@workspace:.":
   version: 0.0.0-use.local
   resolution: "subnet-subgraph@workspace:."

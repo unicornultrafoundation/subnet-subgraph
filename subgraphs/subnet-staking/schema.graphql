@@ -1,0 +1,39 @@
+type UserPool @entity {
+  id: ID! # Duy nhất, kết hợp userId và poolId
+  user: User!
+  pool: Pool!
+  totalStaked: BigInt! # Tổng số token đã stake
+  totalRewardsClaimed: BigInt! # Tổng số phần thưởng đã nhận
+}
+
+type Pool @entity {
+  id: ID! # Địa chỉ của pool
+  stakingToken: String!
+  rewardToken: String!
+  totalStaked: BigInt! # Tổng số token đã stake trong pool
+  totalRewardsClaimed: BigInt! # Tổng số phần thưởng đã nhận
+  userPools: [UserPool!] @derivedFrom(field: "pool")
+  histories: [History!] @derivedFrom(field: "pool")
+}
+
+type History @entity {
+  id: ID!
+  user: User!
+  pool: Pool!
+  type: HistoryType!
+  amount: BigInt!
+  timestamp: BigInt!
+  txHash: String!
+}
+
+enum HistoryType {
+  STAKE
+  WITHDRAW
+  CLAIM
+}
+
+type User @entity {
+  id: ID!
+  userPools: [UserPool!] @derivedFrom(field: "user")
+  histories: [History!] @derivedFrom(field: "user")
+}
