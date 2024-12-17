@@ -10,9 +10,9 @@ dataSources:
     name: NFTContract
     network: mainnet # hoặc mạng của bạn
     source:
-      address: "0x9CEb5fBb9734aC71F365d7cc0EedA48bB9763891" # Địa chỉ hợp đồng NFT
+      address: "0xcf0c0fab5fa74d9c520ce1104aad43884558d898" # Địa chỉ hợp đồng NFT
       abi: ERC721
-      startBlock: 43867666 # Block triển khai
+      startBlock: 20572609 # Block triển khai
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -30,9 +30,9 @@ dataSources:
     name: SubnetNftVaultFactory
     network: mainnet # hoặc mạng của bạn
     source:
-      address: "0xA69e8B32E1B508aa79ada9d3bd34607fF6bE74aA"
+      address: "0x1472bCC4c9E39b77907f601e11E331275029ef57"
       abi: SubnetNftVaultFactory
-      startBlock: 44061288 # Block triển khai
+      startBlock: 22696940 # Block triển khai
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6

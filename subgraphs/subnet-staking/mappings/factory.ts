@@ -10,6 +10,7 @@ export function handlePoolCreated(event: PoolCreated): void {
   pool.rewardToken = event.params.rewardToken.toHex();
   pool.totalStaked =  BigInt.fromI32(0);
   pool.totalRewardsClaimed =  BigInt.fromI32(0);
+  pool.totalUsers  = 0;
   pool.save();
 
   // Tạo một instance của SubnetStakingPool template

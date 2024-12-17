@@ -12,6 +12,7 @@ type Pool @entity {
   rewardToken: String!
   totalStaked: BigInt! # Tổng số token đã stake trong pool
   totalRewardsClaimed: BigInt! # Tổng số phần thưởng đã nhận
+  totalUsers: Int! # Thêm trường này
   userPools: [UserPool!] @derivedFrom(field: "pool")
   histories: [History!] @derivedFrom(field: "pool")
 }

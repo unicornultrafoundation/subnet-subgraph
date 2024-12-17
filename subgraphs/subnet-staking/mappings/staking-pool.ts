@@ -72,13 +72,18 @@ function createHistory(
 export function handleStake(event: StakedEvent): void {
   const userPool = getUserPool(event.params.user.toHex(), event.address.toHex());
 
+  const pool = getPool(userPool.pool)
+  pool.totalStaked = pool.totalStaked.plus(event.params.amount);
+
+  if (userPool.totalStaked.isZero()) {
+    pool.totalUsers += 1;
+  }
+
+  pool.save()
+
   // Update total staked
   userPool.totalStaked = userPool.totalStaked.plus(event.params.amount);
   userPool.save();
-
-  const pool = getPool(userPool.pool)
-  pool.totalStaked = pool.totalStaked.plus(event.params.amount);
-  pool.save()
 
   // Create history record
   createHistory(
@@ -99,9 +104,14 @@ export function handleWithdraw(event: WithdrawnEvent): void {
   userPool.totalStaked = userPool.totalStaked.minus(event.params.amount);
   userPool.save();
 
-  const pool = Pool.load(userPool.pool)
-  pool!.totalStaked = pool!.totalStaked.minus(event.params.amount);
-  pool!.save()
+  const pool = getPool(userPool.pool)
+  pool.totalStaked = pool.totalStaked.minus(event.params.amount);
+
+  if (userPool.totalStaked.isZero()) {
+    pool.totalUsers -= 1;
+  }
+
+  pool.save()
 
   // Create history record
   createHistory(

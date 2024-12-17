@@ -6,9 +6,9 @@ dataSources:
     name: SubnetStakingPoolFactory
     network: mainnet
     source:
-      address: "0xaDD9cF84389087cd366EbA7a54703a902Ca72863"
+      address: "0x8B2d79D0be52C7B96247fe97a1aA938D57a3A107"
       abi: SubnetStakingPoolFactory
-      startBlock: 44065532
+      startBlock: 22728667
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
