@@ -1,0 +1,61 @@
+specVersion: 0.0.4
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: SubnetProvider
+    network: mainnet
+    source:
+      address: "0x3D99fd0A0423a0d3E6808d7726b12f4854B57C6D"
+      abi: SubnetProvider
+      startBlock: 48080081
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Provider
+        - Owner
+      abis:
+        - name: SubnetProvider
+          file: ./abis/SubnetProvider.json
+      eventHandlers:
+        - event: ProviderRegistered(address,uint256,string,string,address,string)
+          handler: handleProviderRegistered
+        - event: ProviderUpdated(uint256,string,string,address,string)
+          handler: handleProviderUpdated
+        - event: ProviderDeleted(uint256)
+          handler: handleProviderDeleted
+        - event: Transfer(indexed address,indexed address,indexed uint256)
+          handler: handleTransfer
+        - event: PeerNodeRegistered(indexed uint256,string,string)
+          handler: handlePeerNodeRegistered
+      file: ./mappings/provider.ts
+
+  # - kind: ethereum/contract
+  #   name: SubnetAppStore
+  #   network: mainnet
+  #   source:
+  #     address: "0xaa0Dce508602d0eF4E1501F4C0eA6cBDD3b8018F"
+  #     abi: SubnetAppStore
+  #     startBlock: 48079602
+  #   mapping:
+  #     kind: ethereum/events
+  #     apiVersion: 0.0.6
+  #     language: wasm/assemblyscript
+  #     entities:
+  #       - Deployment
+  #       - App
+  #     abis:
+  #       - name: SubnetAppStore
+  #         file: ./abis/SubnetAppStore.json
+  #     eventHandlers:
+  #       - event: RewardClaimed(indexed uint256,indexed uint256,uint256,uint256)
+  #         handler: handleRewardClaimed
+  #       - event: UsageReported(indexed uint256,indexed uint256,string,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)
+  #         handler: handleUsageReported
+  #       - event: AppCreated(indexed uint256,string,string,indexed address,uint256)
+  #         handler: handleAppCreated
+  #       - event: LockedRewardPaid(indexed uint256,uint256,uint256,uint256,indexed address,indexed address)
+  #         handler: handleLockedRewardPaid
+  #     file: ./mappings/appstore.ts

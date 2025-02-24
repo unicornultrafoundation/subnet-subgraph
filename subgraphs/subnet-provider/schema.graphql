@@ -1,0 +1,63 @@
+type Provider @entity {
+  id: ID!
+  providerName: String!
+  metadata: String!
+  operator: Bytes!
+  website: String!
+  owner: Owner!
+  deleted: Boolean!
+  usages: [Usage!]! @derivedFrom(field: "provider")
+  peerNodes: [PeerNode!]! @derivedFrom(field: "provider")
+}
+
+type PeerNode @entity {
+  id: ID!
+  peerId: String!
+  provider: Provider!
+  metadata: String!
+  usages: [Usage!]! @derivedFrom(field: "peer")
+}
+
+type Owner @entity {
+  id: ID!
+  address: Bytes!
+  providers: [Provider!]! @derivedFrom(field: "owner")
+}
+
+type Usage @entity {
+  id: ID!
+  provider: Provider!
+  app: App!
+  peer: PeerNode!
+  duration: BigInt!
+  usedCpu: BigInt!
+  usedGpu: BigInt!
+  usedMemory: BigInt!
+  usedStorage: BigInt!
+  usedDownloadBytes: BigInt!
+  usedUploadBytes: BigInt!
+  timestamp: BigInt!
+  reward: BigInt!
+}
+
+type App @entity {
+  id: ID!
+  name: String!
+  symbol: String!
+  owner: Bytes!
+  budget: BigInt!
+  spentBudget: BigInt!
+  paymentToken: Bytes!
+  usages: [Usage!]! @derivedFrom(field: "app")
+  providers: [AppProvider!]! @derivedFrom(field: "app")
+}
+
+type AppProvider @entity {
+  id: ID!
+  provider: Provider!
+  app: App!
+  pendingReward: BigInt!
+  lockedReward: BigInt!
+  claimedReward: BigInt!
+  unlockTime: BigInt!
+}
