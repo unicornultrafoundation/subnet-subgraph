@@ -6,19 +6,12 @@ import { SubnetAppStore } from "../generated/SubnetAppStore/SubnetAppStore"
 export function handleRewardClaimed(event: RewardClaimed): void {
     let appProviderId = event.params.appId.toHex() + "-" + event.params.providerId.toHex()
     let appProvider = AppProvider.load(appProviderId)
-    if (appProvider == null) {
-        appProvider = new AppProvider(appProviderId)
-        appProvider.app = event.params.appId.toHex()
-        appProvider.provider = event.params.providerId.toHex()
+    if (appProvider != null) {
         appProvider.pendingReward = BigInt.fromI32(0)
-        appProvider.claimedReward = BigInt.fromI32(0)
-        appProvider.lockedReward =  BigInt.fromI32(0)
-        appProvider.unlockTime = BigInt.fromI32(0)
+        appProvider.lockedReward = event.params.reward;
+        appProvider.unlockTime = event.params.unlockTime;
+        appProvider.save()
     }
-    appProvider.pendingReward = BigInt.fromI32(0)
-    appProvider.lockedReward = event.params.reward;
-    appProvider.unlockTime = event.params.unlockTime;
-    appProvider.save()
 }
 
 export function handleUsageReported(event: UsageReported): void {
@@ -40,11 +33,25 @@ export function handleUsageReported(event: UsageReported): void {
     usage.peer = peerId;
 
     usage.save()
+
+    let appProviderId = event.params.appId.toHex() + "-" + event.params.providerId.toHex()
+    let appProvider = AppProvider.load(appProviderId)
+    if (appProvider == null) {
+        appProvider = new AppProvider(appProviderId)
+        appProvider.app = event.params.appId.toHex()
+        appProvider.provider = event.params.providerId.toHex()
+        appProvider.pendingReward = BigInt.fromI32(0)
+        appProvider.claimedReward = BigInt.fromI32(0)
+        appProvider.lockedReward =  BigInt.fromI32(0)
+        appProvider.unlockTime = BigInt.fromI32(0)
+    }
+    appProvider.pendingReward =  appProvider.pendingReward.plus(event.params.reward)
+    appProvider.save()
 }
 
 export function handleAppCreated(event: AppCreated): void {
     let appId = event.params.appId.toHex()
-    let contract = SubnetAppStore.bind(Address.fromString("0xCb0b58e5048e65248f2B0aF4d10623A2AAF03DC5"))
+    let contract = SubnetAppStore.bind(Address.fromString("0x5F49358D7717D001Cd5B8bF5613b9bc14cE3dBd2"))
     let appData = contract.getApp(event.params.appId)
 
     let app = new App(appId)
@@ -60,15 +67,8 @@ export function handleAppCreated(event: AppCreated): void {
 export function handleLockedRewardPaid(event: LockedRewardPaid): void {
     let appProviderId = event.params.appId.toHex() + "-" + event.params.provider.toHex()
     let appProvider = AppProvider.load(appProviderId)
-    if (appProvider == null) {
-        appProvider = new AppProvider(appProviderId)
-        appProvider.app = event.params.appId.toHex()
-        appProvider.provider = event.params.provider.toHex()
-        appProvider.pendingReward = BigInt.fromI32(0)
-        appProvider.lockedReward =  BigInt.fromI32(0)
-        appProvider.claimedReward = BigInt.fromI32(0)
+    if (appProvider != null) {
+        appProvider.claimedReward = appProvider.claimedReward.plus(event.params.reward);
+        appProvider.save()
     }
-
-    appProvider.claimedReward = appProvider.claimedReward.plus(event.params.reward);
-    appProvider.save()
 }
