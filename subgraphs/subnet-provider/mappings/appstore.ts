@@ -1,6 +1,6 @@
 import { BigInt, Address } from "@graphprotocol/graph-ts"
 import { RewardClaimed, UsageReported, AppCreated, LockedRewardPaid } from "../generated/SubnetAppStore/SubnetAppStore"
-import { Usage, App, AppProvider } from "../generated/schema"
+import { Usage, App, AppProvider, AppPeer } from "../generated/schema"
 import { SubnetAppStore } from "../generated/SubnetAppStore/SubnetAppStore"
 
 export function handleRewardClaimed(event: RewardClaimed): void {
@@ -36,7 +36,9 @@ export function handleUsageReported(event: UsageReported): void {
 
     let appProviderId = event.params.appId.toHex() + "-" + event.params.providerId.toHex()
     let appProvider = AppProvider.load(appProviderId)
+    let isNewProvider = false;
     if (appProvider == null) {
+        isNewProvider = true;
         appProvider = new AppProvider(appProviderId)
         appProvider.app = event.params.appId.toHex()
         appProvider.provider = event.params.providerId.toHex()
@@ -45,8 +47,39 @@ export function handleUsageReported(event: UsageReported): void {
         appProvider.lockedReward =  BigInt.fromI32(0)
         appProvider.unlockTime = BigInt.fromI32(0)
     }
+
+    let appPeerId = event.params.appId.toHex() + "-" + event.params.peerId
+    let appPeer = AppPeer.load(appPeerId)
+    let isNewPeer = false;
+    if (appPeer == null) {
+        appPeer = new AppPeer(appPeerId)
+        appPeer.app = event.params.appId.toHex()
+        appPeer.peer = event.params.peerId
+        appPeer.reward =  BigInt.fromI32(0)
+        isNewPeer = true;
+    }
+
+    appPeer.reward = appPeer.reward.plus(event.params.reward)
+    appPeer.save();
+
+
     appProvider.pendingReward =  appProvider.pendingReward.plus(event.params.reward)
     appProvider.save()
+
+    let app = App.load(event.params.appId.toHex())
+
+    if (app != null) {
+        if (isNewProvider == true ) {
+            app.providerCount = app.providerCount.plus(BigInt.fromI32(1))
+        }
+    
+        if (isNewPeer == true) {
+            app.peerCount = app.peerCount.plus(BigInt.fromI32(1))
+        }
+    
+        app.save()
+    }
+    
 }
 
 export function handleAppCreated(event: AppCreated): void {
@@ -61,6 +94,8 @@ export function handleAppCreated(event: AppCreated): void {
     app.budget = appData.budget
     app.spentBudget = appData.spentBudget
     app.paymentToken = appData.paymentToken
+    app.peerCount = BigInt.fromI32(0)
+    app.providerCount = BigInt.fromI32(0)
     app.save()
 }
 

@@ -16,6 +16,7 @@ type PeerNode @entity {
   provider: Provider!
   metadata: String!
   usages: [Usage!]! @derivedFrom(field: "peer")
+  apps: [AppPeer!]! @derivedFrom(field: "peer")
 }
 
 type Owner @entity {
@@ -48,6 +49,8 @@ type App @entity {
   budget: BigInt!
   spentBudget: BigInt!
   paymentToken: Bytes!
+  peerCount: BigInt!
+  providerCount: BigInt!
   usages: [Usage!]! @derivedFrom(field: "app")
   providers: [AppProvider!]! @derivedFrom(field: "app")
 }
@@ -60,4 +63,11 @@ type AppProvider @entity {
   lockedReward: BigInt!
   claimedReward: BigInt!
   unlockTime: BigInt!
+}
+
+type AppPeer @entity {
+  id: ID!
+  peer: PeerNode!
+  app: App!
+  reward: BigInt!
 }
