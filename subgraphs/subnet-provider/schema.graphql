@@ -8,6 +8,7 @@ type Provider @entity {
   deleted: Boolean!
   usages: [Usage!]! @derivedFrom(field: "provider")
   peerNodes: [PeerNode!]! @derivedFrom(field: "provider")
+  apps: [AppProvider!]! @derivedFrom(field: "provider")
 }
 
 type PeerNode @entity {
@@ -53,6 +54,7 @@ type App @entity {
   providerCount: BigInt!
   usages: [Usage!]! @derivedFrom(field: "app")
   providers: [AppProvider!]! @derivedFrom(field: "app")
+  peers: [AppPeer!]! @derivedFrom(field: "app")
 }
 
 type AppProvider @entity {
@@ -70,4 +72,17 @@ type AppPeer @entity {
   peer: PeerNode!
   app: App!
   reward: BigInt!
+}
+
+type TotalUsage @entity {
+  id: ID!
+  totalCpu: BigInt!
+  totalGpu: BigInt!
+  totalMemory: BigInt!
+  totalStorage: BigInt!
+  totalDownloadBytes: BigInt!
+  totalUploadBytes: BigInt!
+  totalDuration: BigInt!
+  totalPeerCount: BigInt!
+  totalProviderCount: BigInt!
 }

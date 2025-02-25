@@ -1,6 +1,6 @@
 import { BigInt, Address } from "@graphprotocol/graph-ts"
 import { RewardClaimed, UsageReported, AppCreated, LockedRewardPaid } from "../generated/SubnetAppStore/SubnetAppStore"
-import { Usage, App, AppProvider, AppPeer } from "../generated/schema"
+import { Usage, App, AppProvider, AppPeer, TotalUsage } from "../generated/schema"
 import { SubnetAppStore } from "../generated/SubnetAppStore/SubnetAppStore"
 
 export function handleRewardClaimed(event: RewardClaimed): void {
@@ -54,7 +54,7 @@ export function handleUsageReported(event: UsageReported): void {
     if (appPeer == null) {
         appPeer = new AppPeer(appPeerId)
         appPeer.app = event.params.appId.toHex()
-        appPeer.peer = event.params.peerId
+        appPeer.peer = peerId
         appPeer.reward =  BigInt.fromI32(0)
         isNewPeer = true;
     }
@@ -79,6 +79,38 @@ export function handleUsageReported(event: UsageReported): void {
     
         app.save()
     }
+
+    let totalUsage = TotalUsage.load("total")
+    if (totalUsage == null) {
+        totalUsage = new TotalUsage("total")
+        totalUsage.totalCpu = BigInt.fromI32(0)
+        totalUsage.totalGpu = BigInt.fromI32(0)
+        totalUsage.totalMemory = BigInt.fromI32(0)
+        totalUsage.totalStorage = BigInt.fromI32(0)
+        totalUsage.totalDownloadBytes = BigInt.fromI32(0)
+        totalUsage.totalUploadBytes = BigInt.fromI32(0)
+        totalUsage.totalDuration = BigInt.fromI32(0)
+        totalUsage.totalPeerCount = BigInt.fromI32(0)
+        totalUsage.totalProviderCount = BigInt.fromI32(0)
+    }
+
+    totalUsage.totalCpu = totalUsage.totalCpu.plus(event.params.usedCpu)
+    totalUsage.totalGpu = totalUsage.totalGpu.plus(event.params.usedGpu)
+    totalUsage.totalMemory = totalUsage.totalMemory.plus(event.params.usedMemory)
+    totalUsage.totalStorage = totalUsage.totalStorage.plus(event.params.usedStorage)
+    totalUsage.totalDownloadBytes = totalUsage.totalDownloadBytes.plus(event.params.usedDownloadBytes)
+    totalUsage.totalUploadBytes = totalUsage.totalUploadBytes.plus(event.params.usedUploadBytes)
+    totalUsage.totalDuration = totalUsage.totalDuration.plus(event.params.duration)
+
+    if (isNewProvider) {
+        totalUsage.totalProviderCount = totalUsage.totalProviderCount.plus(BigInt.fromI32(1))
+    }
+
+    if (isNewPeer) {
+        totalUsage.totalPeerCount = totalUsage.totalPeerCount.plus(BigInt.fromI32(1))
+    }
+
+    totalUsage.save()
     
 }
 

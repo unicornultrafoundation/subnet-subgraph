@@ -47,6 +47,7 @@ dataSources:
       entities:
         - Deployment
         - App
+        - TotalUsage
       abis:
         - name: SubnetAppStore
           file: ./abis/SubnetAppStore.json
