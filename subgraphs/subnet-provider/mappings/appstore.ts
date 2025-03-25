@@ -1,6 +1,6 @@
 import { BigInt, Address } from "@graphprotocol/graph-ts"
 import { RewardClaimed, UsageReported, AppCreated, LockedRewardPaid } from "../generated/SubnetAppStore/SubnetAppStore"
-import { Usage, App, AppProvider, AppPeer, TotalUsage } from "../generated/schema"
+import { Usage, App, AppProvider, AppPeer, TotalUsage, PeerTotalUsage } from "../generated/schema"
 import { SubnetAppStore } from "../generated/SubnetAppStore/SubnetAppStore"
 
 export function handleRewardClaimed(event: RewardClaimed): void {
@@ -44,7 +44,7 @@ export function handleUsageReported(event: UsageReported): void {
         appProvider.provider = event.params.providerId.toHex()
         appProvider.pendingReward = BigInt.fromI32(0)
         appProvider.claimedReward = BigInt.fromI32(0)
-        appProvider.lockedReward =  BigInt.fromI32(0)
+        appProvider.lockedReward = BigInt.fromI32(0)
         appProvider.unlockTime = BigInt.fromI32(0)
     }
 
@@ -55,7 +55,7 @@ export function handleUsageReported(event: UsageReported): void {
         appPeer = new AppPeer(appPeerId)
         appPeer.app = event.params.appId.toHex()
         appPeer.peer = peerId
-        appPeer.reward =  BigInt.fromI32(0)
+        appPeer.reward = BigInt.fromI32(0)
         isNewPeer = true;
     }
 
@@ -63,20 +63,20 @@ export function handleUsageReported(event: UsageReported): void {
     appPeer.save();
 
 
-    appProvider.pendingReward =  appProvider.pendingReward.plus(event.params.reward)
+    appProvider.pendingReward = appProvider.pendingReward.plus(event.params.reward)
     appProvider.save()
 
     let app = App.load(event.params.appId.toHex())
 
     if (app != null) {
-        if (isNewProvider == true ) {
+        if (isNewProvider == true) {
             app.providerCount = app.providerCount.plus(BigInt.fromI32(1))
         }
-    
+
         if (isNewPeer == true) {
             app.peerCount = app.peerCount.plus(BigInt.fromI32(1))
         }
-    
+
         app.save()
     }
 
@@ -102,6 +102,31 @@ export function handleUsageReported(event: UsageReported): void {
     totalUsage.totalUploadBytes = totalUsage.totalUploadBytes.plus(event.params.usedUploadBytes)
     totalUsage.totalDuration = totalUsage.totalDuration.plus(event.params.duration)
 
+    // handle peer total usage
+    let peerTotalUsageId = event.params.peerId
+    let peerTotalUsage = PeerTotalUsage.load(peerTotalUsageId)
+    if (peerTotalUsage == null) {
+        peerTotalUsage = new PeerTotalUsage(peerTotalUsageId)
+        peerTotalUsage.app = event.params.appId.toHex()
+        peerTotalUsage.totalCpu = BigInt.fromI32(0)
+        peerTotalUsage.totalGpu = BigInt.fromI32(0)
+        peerTotalUsage.totalMemory = BigInt.fromI32(0)
+        peerTotalUsage.totalStorage = BigInt.fromI32(0)
+        peerTotalUsage.totalDownloadBytes = BigInt.fromI32(0)
+        peerTotalUsage.totalUploadBytes = BigInt.fromI32(0)
+        peerTotalUsage.totalDuration = BigInt.fromI32(0)
+
+    }
+    peerTotalUsage.totalCpu = peerTotalUsage.totalCpu.plus(event.params.usedCpu)
+    peerTotalUsage.totalGpu = peerTotalUsage.totalCpu.plus(event.params.usedGpu)
+    peerTotalUsage.totalMemory = peerTotalUsage.totalCpu.plus(event.params.usedMemory)
+    peerTotalUsage.totalStorage = peerTotalUsage.totalCpu.plus(event.params.usedStorage)
+    peerTotalUsage.totalDownloadBytes = peerTotalUsage.totalDownloadBytes.plus(event.params.usedDownloadBytes)
+    peerTotalUsage.totalUploadBytes = peerTotalUsage.totalUploadBytes.plus(event.params.usedUploadBytes)
+    peerTotalUsage.totalDuration = peerTotalUsage.totalDuration.plus(event.params.duration)
+    peerTotalUsage.save()
+
+
     if (isNewProvider) {
         totalUsage.totalProviderCount = totalUsage.totalProviderCount.plus(BigInt.fromI32(1))
     }
@@ -111,7 +136,7 @@ export function handleUsageReported(event: UsageReported): void {
     }
 
     totalUsage.save()
-    
+
 }
 
 export function handleAppCreated(event: AppCreated): void {

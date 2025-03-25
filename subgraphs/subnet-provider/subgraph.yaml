@@ -39,7 +39,7 @@ dataSources:
       address: "0x5F49358D7717D001Cd5B8bF5613b9bc14cE3dBd2"
       abi: SubnetAppStore
       startBlock: 26041739
-      
+
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -48,6 +48,7 @@ dataSources:
         - Deployment
         - App
         - TotalUsage
+        - PeerTotalUsages
       abis:
         - name: SubnetAppStore
           file: ./abis/SubnetAppStore.json
