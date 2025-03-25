@@ -103,16 +103,19 @@ export function handleUsageReported(event: UsageReported): void {
     totalUsage.totalDuration = totalUsage.totalDuration.plus(event.params.duration)
 
     // handle peer total usage
-    let peerTotalUsageId = event.params.appId.toHex() + "-" + event.params.peerId
+    let peerTotalUsageId = event.params.peerId
     let peerTotalUsage = PeerTotalUsage.load(peerTotalUsageId)
     if (peerTotalUsage == null) {
         peerTotalUsage = new PeerTotalUsage(peerTotalUsageId)
+        peerTotalUsage.app = event.params.appId.toHex()
         peerTotalUsage.totalCpu = BigInt.fromI32(0)
         peerTotalUsage.totalGpu = BigInt.fromI32(0)
         peerTotalUsage.totalMemory = BigInt.fromI32(0)
         peerTotalUsage.totalStorage = BigInt.fromI32(0)
         peerTotalUsage.totalDownloadBytes = BigInt.fromI32(0)
         peerTotalUsage.totalUploadBytes = BigInt.fromI32(0)
+        peerTotalUsage.totalDuration = BigInt.fromI32(0)
+
     }
     peerTotalUsage.totalCpu = peerTotalUsage.totalCpu.plus(event.params.usedCpu)
     peerTotalUsage.totalGpu = peerTotalUsage.totalCpu.plus(event.params.usedGpu)
@@ -120,6 +123,7 @@ export function handleUsageReported(event: UsageReported): void {
     peerTotalUsage.totalStorage = peerTotalUsage.totalCpu.plus(event.params.usedStorage)
     peerTotalUsage.totalDownloadBytes = peerTotalUsage.totalDownloadBytes.plus(event.params.usedDownloadBytes)
     peerTotalUsage.totalUploadBytes = peerTotalUsage.totalUploadBytes.plus(event.params.usedUploadBytes)
+    peerTotalUsage.totalDuration = peerTotalUsage.totalDuration.plus(event.params.duration)
     peerTotalUsage.save()
 
 

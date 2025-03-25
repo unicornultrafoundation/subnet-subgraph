@@ -55,6 +55,7 @@ type App @entity {
   usages: [Usage!]! @derivedFrom(field: "app")
   providers: [AppProvider!]! @derivedFrom(field: "app")
   peers: [AppPeer!]! @derivedFrom(field: "app")
+  peerTotalUsages: [PeerTotalUsage!]! @derivedFrom(field: "app")
 }
 
 type AppProvider @entity {
@@ -89,10 +90,12 @@ type TotalUsage @entity {
 
 type PeerTotalUsage @entity {
   id: ID!
+  app: App!
   totalCpu: BigInt!
   totalGpu: BigInt!
   totalMemory: BigInt!
   totalStorage: BigInt!
   totalDownloadBytes: BigInt!
   totalUploadBytes: BigInt!
+  totalDuration: BigInt!
 }
