@@ -86,3 +86,13 @@ type TotalUsage @entity {
   totalPeerCount: BigInt!
   totalProviderCount: BigInt!
 }
+
+type PeerTotalUsage @entity {
+  id: ID!
+  totalCpu: BigInt!
+  totalGpu: BigInt!
+  totalMemory: BigInt!
+  totalStorage: BigInt!
+  totalDownloadBytes: BigInt!
+  totalUploadBytes: BigInt!
+}
