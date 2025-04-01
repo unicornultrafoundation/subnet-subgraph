@@ -98,4 +98,5 @@ type PeerTotalUsage @entity {
   totalDownloadBytes: BigInt!
   totalUploadBytes: BigInt!
   totalDuration: BigInt!
+  timestamp: BigInt!
 }

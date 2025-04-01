@@ -124,6 +124,7 @@ export function handleUsageReported(event: UsageReported): void {
     peerTotalUsage.totalDownloadBytes = peerTotalUsage.totalDownloadBytes.plus(event.params.usedDownloadBytes)
     peerTotalUsage.totalUploadBytes = peerTotalUsage.totalUploadBytes.plus(event.params.usedUploadBytes)
     peerTotalUsage.totalDuration = peerTotalUsage.totalDuration.plus(event.params.duration)
+    peerTotalUsage.timestamp = event.params.timestamp
     peerTotalUsage.save()
 
 
