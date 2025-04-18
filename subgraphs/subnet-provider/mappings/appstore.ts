@@ -1,6 +1,6 @@
 import { BigInt, Address } from "@graphprotocol/graph-ts"
 import { RewardClaimed, UsageReported, AppCreated, LockedRewardPaid } from "../generated/SubnetAppStore/SubnetAppStore"
-import { Usage, App, AppProvider, AppPeer, TotalUsage, PeerTotalUsage, DailyResourceUsage, WeeklyResourceUsage, MonthlyResourceUsage } from "../generated/schema"
+import { Usage, App, AppProvider, AppPeer, Peer, TotalUsage, PeerTotalUsage, DailyResourceUsage, WeeklyResourceUsage, MonthlyResourceUsage } from "../generated/schema"
 import { SubnetAppStore } from "../generated/SubnetAppStore/SubnetAppStore"
 
 class DateInfo {
@@ -40,8 +40,8 @@ function getDateInfo(timestamp: BigInt): DateInfo {
 
 function getOrCreateDailyResourceUsage(
     appId: string,
-    providerId: string,
     peerId: string,
+    providerId: string,
     dateInfo: DateInfo
 ): DailyResourceUsage {
     let id = `${appId}-${peerId}-${providerId}-${dateInfo.date}`
@@ -50,8 +50,8 @@ function getOrCreateDailyResourceUsage(
     if (usage == null) {
         usage = new DailyResourceUsage(id)
         usage.app = appId
-        usage.provider = providerId
         usage.peer = peerId
+        usage.provider = providerId
         usage.dateKey = dateInfo.date
         usage.timestamp = dateInfo.timestamp
         usage.totalCpu = BigInt.fromI32(0)
@@ -69,8 +69,8 @@ function getOrCreateDailyResourceUsage(
 
 function getOrCreateWeeklyResourceUsage(
     appId: string,
-    providerId: string,
     peerId: string,
+    providerId: string,
     dateInfo: DateInfo
 ): WeeklyResourceUsage {
     let id = `${appId}-${peerId}-${providerId}-${dateInfo.week}`
@@ -79,8 +79,8 @@ function getOrCreateWeeklyResourceUsage(
     if (usage == null) {
         usage = new WeeklyResourceUsage(id)
         usage.app = appId
-        usage.provider = providerId
         usage.peer = peerId
+        usage.provider = providerId
         usage.dateKey = dateInfo.week
         usage.timestamp = dateInfo.timestamp
         usage.totalCpu = BigInt.fromI32(0)
@@ -98,8 +98,8 @@ function getOrCreateWeeklyResourceUsage(
 
 function getOrCreateMonthlyResourceUsage(
     appId: string,
-    providerId: string,
     peerId: string,
+    providerId: string,
     dateInfo: DateInfo
 ): MonthlyResourceUsage {
     let id = `${appId}-${peerId}-${providerId}-${dateInfo.month}`
@@ -108,8 +108,8 @@ function getOrCreateMonthlyResourceUsage(
     if (usage == null) {
         usage = new MonthlyResourceUsage(id)
         usage.app = appId
-        usage.provider = providerId
         usage.peer = peerId
+        usage.provider = providerId
         usage.dateKey = dateInfo.month
         usage.timestamp = dateInfo.timestamp
         usage.totalCpu = BigInt.fromI32(0)
@@ -262,12 +262,18 @@ export function handleUsageReported(event: UsageReported): void {
 
     // Get date information
     let dateInfo = getDateInfo(event.params.timestamp)
+    let peer = Peer.load(event.params.peerId)
+    if (!peer) {
+        peer = new Peer(event.params.peerId)
+        peer.save()
+    }
+
 
     // Update daily resource usage
     let dailyUsage = getOrCreateDailyResourceUsage(
         event.params.appId.toHex(),
-        event.params.providerId.toHex(),
         event.params.peerId,
+        event.params.providerId.toHex(),
         dateInfo
     )
 
@@ -285,8 +291,8 @@ export function handleUsageReported(event: UsageReported): void {
     // Update weekly resource usage
     let weeklyUsage = getOrCreateWeeklyResourceUsage(
         event.params.appId.toHex(),
-        event.params.providerId.toHex(),
         event.params.peerId,
+        event.params.providerId.toHex(),
         dateInfo
     )
     weeklyUsage.totalCpu = weeklyUsage.totalCpu.plus(event.params.usedCpu)
@@ -302,8 +308,8 @@ export function handleUsageReported(event: UsageReported): void {
     // Update monthly resource usage
     let monthlyUsage = getOrCreateMonthlyResourceUsage(
         event.params.appId.toHex(),
-        event.params.providerId.toHex(),
         event.params.peerId,
+        event.params.providerId.toHex(),
         dateInfo
     )
     monthlyUsage.totalCpu = monthlyUsage.totalCpu.plus(event.params.usedCpu)

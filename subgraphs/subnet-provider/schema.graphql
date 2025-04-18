@@ -20,6 +20,13 @@ type PeerNode @entity {
   apps: [AppPeer!]! @derivedFrom(field: "peer")
 }
 
+type Peer @entity {
+  id: ID!
+  dailyResourceUsages: [DailyResourceUsage!]! @derivedFrom(field: "peer")
+  weeklyResourceUsages: [WeeklyResourceUsage!]! @derivedFrom(field: "peer")
+  monthlyResourceUsages: [MonthlyResourceUsage!]! @derivedFrom(field: "peer")
+}
+
 type Owner @entity {
   id: ID!
   address: Bytes!
@@ -102,11 +109,11 @@ type PeerTotalUsage @entity {
 }
 
 type DailyResourceUsage @entity {
-  id: ID! # Format: APP_ID-PEER_ID-PROVIDER_ID-DATE(2025-04-14)
-  app: App!
-  provider: Provider!
-  peer: PeerNode!
-  dateKey: String! # Format: YYYY-MM-DD
+  id: ID!
+  app: App! @index
+  peer: Peer! @index
+  provider: Provider! @index
+  dateKey: String! @index # Format: YYYY-MM-DD
   timestamp: BigInt!
   totalCpu: BigInt!
   totalGpu: BigInt!
@@ -119,11 +126,11 @@ type DailyResourceUsage @entity {
 }
 
 type WeeklyResourceUsage @entity {
-  id: ID! # Format: APP_ID-PEER_ID-PROVIDER_ID-WEEK(2025-W15)
-  app: App!
-  provider: Provider!
-  peer: PeerNode!
-  dateKey: String! # Format: YYYY-Www
+  id: ID!
+  app: App! @index
+  peer: Peer! @index
+  provider: Provider! @index
+  dateKey: String! @index # Format: YYYY-Www
   timestamp: BigInt!
   totalCpu: BigInt!
   totalGpu: BigInt!
@@ -136,11 +143,11 @@ type WeeklyResourceUsage @entity {
 }
 
 type MonthlyResourceUsage @entity {
-  id: ID! # Format: APP_ID-PEER_ID-PROVIDER_ID-MONTH(2025-04)
-  app: App!
-  provider: Provider!
-  peer: PeerNode!
-  dateKey: String! # Format: YYYY-MM
+  id: ID!
+  app: App! @index
+  peer: Peer! @index
+  provider: Provider! @index
+  dateKey: String! @index # Format: YYYY-MM
   timestamp: BigInt!
   totalCpu: BigInt!
   totalGpu: BigInt!

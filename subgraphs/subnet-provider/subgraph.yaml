@@ -48,7 +48,10 @@ dataSources:
         - Deployment
         - App
         - TotalUsage
-        - PeerTotalUsages
+        - PeerTotalUsage
+        - DailyResourceUsage
+        - WeeklyResourceUsage
+        - MonthlyResourceUsage
       abis:
         - name: SubnetAppStore
           file: ./abis/SubnetAppStore.json
