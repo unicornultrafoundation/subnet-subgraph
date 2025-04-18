@@ -1,7 +1,127 @@
 import { BigInt, Address } from "@graphprotocol/graph-ts"
 import { RewardClaimed, UsageReported, AppCreated, LockedRewardPaid } from "../generated/SubnetAppStore/SubnetAppStore"
-import { Usage, App, AppProvider, AppPeer, TotalUsage, PeerTotalUsage } from "../generated/schema"
+import { Usage, App, AppProvider, AppPeer, TotalUsage, PeerTotalUsage, DailyResourceUsage, WeeklyResourceUsage, MonthlyResourceUsage } from "../generated/schema"
 import { SubnetAppStore } from "../generated/SubnetAppStore/SubnetAppStore"
+
+class DateInfo {
+    constructor(
+        public date: string,
+        public week: string,
+        public month: string,
+        public timestamp: BigInt
+    ) { }
+}
+
+function getDateInfo(timestamp: BigInt): DateInfo {
+    let date = new Date(timestamp.toI64() * 1000)
+
+    // Get Date with format YYYY-MM-DD
+    let year = date.getUTCFullYear().toString()
+    let month = (date.getUTCMonth() + 1).toString().padStart(2, '0')
+    let day = date.getUTCDate().toString().padStart(2, '0')
+    let dateStr = `${year}-${month}-${day}`
+
+    // Get Month with format YYYY-MM
+    let monthStr = `${year}-${month}`
+
+    // Get ISO week number
+    let target = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()))
+    let dayNum = target.getUTCDay() || 7
+    target.setUTCDate(target.getUTCDate() + 4 - dayNum)
+    let firstDayOfYear = new Date(Date.UTC(target.getUTCFullYear(), 0, 1))
+    let weekNum = Math.ceil((((target.getTime() - firstDayOfYear.getTime()) / 86400000) + 1) / 7)
+
+    let weekStr = `${year}-W${weekNum.toString().padStart(2, '0')}`
+
+    return new DateInfo(dateStr, weekStr, monthStr, timestamp)
+}
+
+function getOrCreateDailyResourceUsage(
+    appId: string,
+    providerId: string,
+    peerId: string,
+    dateInfo: DateInfo
+): DailyResourceUsage {
+    let id = `${appId}-${peerId}-${providerId}-${dateInfo.date}`
+    let usage = DailyResourceUsage.load(id)
+
+    if (usage == null) {
+        usage = new DailyResourceUsage(id)
+        usage.app = appId
+        usage.provider = providerId
+        usage.peer = peerId
+        usage.dateKey = dateInfo.date
+        usage.timestamp = dateInfo.timestamp
+        usage.totalCpu = BigInt.fromI32(0)
+        usage.totalGpu = BigInt.fromI32(0)
+        usage.totalMemory = BigInt.fromI32(0)
+        usage.totalStorage = BigInt.fromI32(0)
+        usage.totalDownloadBytes = BigInt.fromI32(0)
+        usage.totalUploadBytes = BigInt.fromI32(0)
+        usage.totalDuration = BigInt.fromI32(0)
+        usage.totalReward = BigInt.fromI32(0)
+    }
+
+    return usage
+}
+
+function getOrCreateWeeklyResourceUsage(
+    appId: string,
+    providerId: string,
+    peerId: string,
+    dateInfo: DateInfo
+): WeeklyResourceUsage {
+    let id = `${appId}-${peerId}-${providerId}-${dateInfo.week}`
+    let usage = WeeklyResourceUsage.load(id)
+
+    if (usage == null) {
+        usage = new WeeklyResourceUsage(id)
+        usage.app = appId
+        usage.provider = providerId
+        usage.peer = peerId
+        usage.dateKey = dateInfo.week
+        usage.timestamp = dateInfo.timestamp
+        usage.totalCpu = BigInt.fromI32(0)
+        usage.totalGpu = BigInt.fromI32(0)
+        usage.totalMemory = BigInt.fromI32(0)
+        usage.totalStorage = BigInt.fromI32(0)
+        usage.totalDownloadBytes = BigInt.fromI32(0)
+        usage.totalUploadBytes = BigInt.fromI32(0)
+        usage.totalDuration = BigInt.fromI32(0)
+        usage.totalReward = BigInt.fromI32(0)
+    }
+
+    return usage
+}
+
+function getOrCreateMonthlyResourceUsage(
+    appId: string,
+    providerId: string,
+    peerId: string,
+    dateInfo: DateInfo
+): MonthlyResourceUsage {
+    let id = `${appId}-${peerId}-${providerId}-${dateInfo.month}`
+    let usage = MonthlyResourceUsage.load(id)
+
+    if (usage == null) {
+        usage = new MonthlyResourceUsage(id)
+        usage.app = appId
+        usage.provider = providerId
+        usage.peer = peerId
+        usage.dateKey = dateInfo.month
+        usage.timestamp = dateInfo.timestamp
+        usage.totalCpu = BigInt.fromI32(0)
+        usage.totalGpu = BigInt.fromI32(0)
+        usage.totalMemory = BigInt.fromI32(0)
+        usage.totalStorage = BigInt.fromI32(0)
+        usage.totalDownloadBytes = BigInt.fromI32(0)
+        usage.totalUploadBytes = BigInt.fromI32(0)
+        usage.totalDuration = BigInt.fromI32(0)
+        usage.totalReward = BigInt.fromI32(0)
+    }
+
+    return usage
+}
 
 export function handleRewardClaimed(event: RewardClaimed): void {
     let appProviderId = event.params.appId.toHex() + "-" + event.params.providerId.toHex()
@@ -138,6 +258,61 @@ export function handleUsageReported(event: UsageReported): void {
 
     totalUsage.save()
 
+    // Get date information
+    let dateInfo = getDateInfo(event.params.timestamp)
+
+    // Update daily resource usage
+    let dailyUsage = getOrCreateDailyResourceUsage(
+        event.params.appId.toHex(),
+        event.params.providerId.toHex(),
+        event.params.peerId,
+        dateInfo
+    )
+
+    dailyUsage.totalCpu = dailyUsage.totalCpu.plus(event.params.usedCpu)
+    dailyUsage.totalGpu = dailyUsage.totalGpu.plus(event.params.usedGpu)
+    dailyUsage.totalMemory = dailyUsage.totalMemory.plus(event.params.usedMemory)
+    dailyUsage.totalStorage = dailyUsage.totalStorage.plus(event.params.usedStorage)
+    dailyUsage.totalDownloadBytes = dailyUsage.totalDownloadBytes.plus(event.params.usedDownloadBytes)
+    dailyUsage.totalUploadBytes = dailyUsage.totalUploadBytes.plus(event.params.usedUploadBytes)
+    dailyUsage.totalDuration = dailyUsage.totalDuration.plus(event.params.duration)
+    dailyUsage.totalReward = dailyUsage.totalReward.plus(event.params.reward)
+
+    dailyUsage.save()
+
+    // Update weekly resource usage
+    let weeklyUsage = getOrCreateWeeklyResourceUsage(
+        event.params.appId.toHex(),
+        event.params.providerId.toHex(),
+        event.params.peerId,
+        dateInfo
+    )
+    weeklyUsage.totalCpu = weeklyUsage.totalCpu.plus(event.params.usedCpu)
+    weeklyUsage.totalGpu = weeklyUsage.totalGpu.plus(event.params.usedGpu)
+    weeklyUsage.totalMemory = weeklyUsage.totalMemory.plus(event.params.usedMemory)
+    weeklyUsage.totalStorage = weeklyUsage.totalStorage.plus(event.params.usedStorage)
+    weeklyUsage.totalDownloadBytes = weeklyUsage.totalDownloadBytes.plus(event.params.usedDownloadBytes)
+    weeklyUsage.totalUploadBytes = weeklyUsage.totalUploadBytes.plus(event.params.usedUploadBytes)
+    weeklyUsage.totalDuration = weeklyUsage.totalDuration.plus(event.params.duration)
+    weeklyUsage.totalReward = weeklyUsage.totalReward.plus(event.params.reward)
+    weeklyUsage.save()
+
+    // Update monthly resource usage
+    let monthlyUsage = getOrCreateMonthlyResourceUsage(
+        event.params.appId.toHex(),
+        event.params.providerId.toHex(),
+        event.params.peerId,
+        dateInfo
+    )
+    monthlyUsage.totalCpu = monthlyUsage.totalCpu.plus(event.params.usedCpu)
+    monthlyUsage.totalGpu = monthlyUsage.totalGpu.plus(event.params.usedGpu)
+    monthlyUsage.totalMemory = monthlyUsage.totalMemory.plus(event.params.usedMemory)
+    monthlyUsage.totalStorage = monthlyUsage.totalStorage.plus(event.params.usedStorage)
+    monthlyUsage.totalDownloadBytes = monthlyUsage.totalDownloadBytes.plus(event.params.usedDownloadBytes)
+    monthlyUsage.totalUploadBytes = monthlyUsage.totalUploadBytes.plus(event.params.usedUploadBytes)
+    monthlyUsage.totalDuration = monthlyUsage.totalDuration.plus(event.params.duration)
+    monthlyUsage.totalReward = monthlyUsage.totalReward.plus(event.params.reward)
+    monthlyUsage.save()
 }
 
 export function handleAppCreated(event: AppCreated): void {
