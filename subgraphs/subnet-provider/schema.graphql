@@ -102,12 +102,12 @@ type PeerTotalUsage @entity {
 }
 
 type DailyResourceUsage @entity {
-  id: ID! # Format: APP_ID-PROVIDER_ID-PEER_ID-DATE(2025-04-14)
+  id: ID! # Format: APP_ID-PEER_ID-PROVIDER_ID-DATE(2025-04-14)
   app: App!
   provider: Provider!
   peer: PeerNode!
   dateKey: String! # Format: YYYY-MM-DD
-  timestamp: BigInt! # Unix timestamp for sorting/filtering
+  timestamp: BigInt!
   totalCpu: BigInt!
   totalGpu: BigInt!
   totalMemory: BigInt!
@@ -119,12 +119,12 @@ type DailyResourceUsage @entity {
 }
 
 type WeeklyResourceUsage @entity {
-  id: ID! # Format: APP_ID-PROVIDER_ID-PEER_ID-WEEK(2025-W15)
+  id: ID! # Format: APP_ID-PEER_ID-PROVIDER_ID-WEEK(2025-W15)
   app: App!
   provider: Provider!
   peer: PeerNode!
   dateKey: String! # Format: YYYY-Www
-  timestamp: BigInt! # Unix timestamp for sorting/filtering
+  timestamp: BigInt!
   totalCpu: BigInt!
   totalGpu: BigInt!
   totalMemory: BigInt!
@@ -136,12 +136,12 @@ type WeeklyResourceUsage @entity {
 }
 
 type MonthlyResourceUsage @entity {
-  id: ID! # Format: APP_ID-PROVIDER_ID-PEER_ID-MONTH(2025-04)
+  id: ID! # Format: APP_ID-PEER_ID-PROVIDER_ID-MONTH(2025-04)
   app: App!
   provider: Provider!
   peer: PeerNode!
   dateKey: String! # Format: YYYY-MM
-  timestamp: BigInt! # Unix timestamp for sorting/filtering
+  timestamp: BigInt!
   totalCpu: BigInt!
   totalGpu: BigInt!
   totalMemory: BigInt!

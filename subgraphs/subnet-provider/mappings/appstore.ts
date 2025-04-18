@@ -29,9 +29,11 @@ function getDateInfo(timestamp: BigInt): DateInfo {
     let dayNum = target.getUTCDay() || 7
     target.setUTCDate(target.getUTCDate() + 4 - dayNum)
     let firstDayOfYear = new Date(Date.UTC(target.getUTCFullYear(), 0, 1))
-    let weekNum = Math.ceil((((target.getTime() - firstDayOfYear.getTime()) / 86400000) + 1) / 7)
 
-    let weekStr = `${year}-W${weekNum.toString().padStart(2, '0')}`
+
+    const daysDifference = (target.getTime() - firstDayOfYear.getTime()) / 86400000;
+    const weekNumber = (daysDifference + 1) / 7;
+    let weekStr = `${year}-W${weekNumber.toString().padStart(2, '0')}`
 
     return new DateInfo(dateStr, weekStr, monthStr, timestamp)
 }
