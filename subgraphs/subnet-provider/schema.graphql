@@ -20,6 +20,13 @@ type PeerNode @entity {
   apps: [AppPeer!]! @derivedFrom(field: "peer")
 }
 
+type Peer @entity {
+  id: ID!
+  dailyResourceUsages: [DailyResourceUsage!]! @derivedFrom(field: "peer")
+  weeklyResourceUsages: [WeeklyResourceUsage!]! @derivedFrom(field: "peer")
+  monthlyResourceUsages: [MonthlyResourceUsage!]! @derivedFrom(field: "peer")
+}
+
 type Owner @entity {
   id: ID!
   address: Bytes!
@@ -99,4 +106,55 @@ type PeerTotalUsage @entity {
   totalUploadBytes: BigInt!
   totalDuration: BigInt!
   timestamp: BigInt!
+}
+
+type DailyResourceUsage @entity {
+  id: ID!
+  app: App! @index
+  peer: Peer! @index
+  provider: Provider! @index
+  dateKey: BigInt! @index # Timestamp at 00:00:00 UTC of the day
+  timestamp: BigInt!
+  totalCpu: BigInt!
+  totalGpu: BigInt!
+  totalMemory: BigInt!
+  totalStorage: BigInt!
+  totalDownloadBytes: BigInt!
+  totalUploadBytes: BigInt!
+  totalDuration: BigInt!
+  totalReward: BigInt!
+}
+
+type WeeklyResourceUsage @entity {
+  id: ID!
+  app: App! @index
+  peer: Peer! @index
+  provider: Provider! @index
+  dateKey: BigInt! @index # Timestamp at 00:00:00 UTC of Monday
+  timestamp: BigInt!
+  totalCpu: BigInt!
+  totalGpu: BigInt!
+  totalMemory: BigInt!
+  totalStorage: BigInt!
+  totalDownloadBytes: BigInt!
+  totalUploadBytes: BigInt!
+  totalDuration: BigInt!
+  totalReward: BigInt!
+}
+
+type MonthlyResourceUsage @entity {
+  id: ID!
+  app: App! @index
+  peer: Peer! @index
+  provider: Provider! @index
+  dateKey: BigInt! @index # Timestamp at 00:00:00 UTC of first day of month
+  timestamp: BigInt!
+  totalCpu: BigInt!
+  totalGpu: BigInt!
+  totalMemory: BigInt!
+  totalStorage: BigInt!
+  totalDownloadBytes: BigInt!
+  totalUploadBytes: BigInt!
+  totalDuration: BigInt!
+  totalReward: BigInt!
 }
