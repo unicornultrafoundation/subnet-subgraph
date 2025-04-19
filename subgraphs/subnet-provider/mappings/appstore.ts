@@ -5,37 +5,45 @@ import { SubnetAppStore } from "../generated/SubnetAppStore/SubnetAppStore"
 
 class DateInfo {
     constructor(
-        public date: string,
-        public week: string,
-        public month: string,
-        public timestamp: BigInt
+        public timestamp: BigInt,
+        public dayTimestamp: BigInt,
+        public weekTimestamp: BigInt,
+        public monthTimestamp: BigInt
     ) { }
 }
 
 function getDateInfo(timestamp: BigInt): DateInfo {
     let date = new Date(timestamp.toI64() * 1000)
 
-    // Get Date with format YYYY-MM-DD
-    let year = date.getUTCFullYear().toString()
-    let month = (date.getUTCMonth() + 1).toString().padStart(2, '0')
-    let day = date.getUTCDate().toString().padStart(2, '0')
-    let dateStr = `${year}-${month}-${day}`
+    // Get start of day (00:00:00 UTC)
+    let dayStart = new Date(Date.UTC(
+        date.getUTCFullYear(),
+        date.getUTCMonth(),
+        date.getUTCDate()
+    ))
 
-    // Get Month with format YYYY-MM
-    let monthStr = `${year}-${month}`
+    // Get start of month (1st day, 00:00:00 UTC)
+    let monthStart = new Date(Date.UTC(
+        date.getUTCFullYear(),
+        date.getUTCMonth(),
+        1
+    ))
 
-    // Get ISO week number
-    let target = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()))
-    let dayNum = target.getUTCDay() || 7
-    target.setUTCDate(target.getUTCDate() + 4 - dayNum)
-    let firstDayOfYear = new Date(Date.UTC(target.getUTCFullYear(), 0, 1))
+    // Get start of week (Monday, 00:00:00 UTC)
+    let weekStart = new Date(Date.UTC(
+        date.getUTCFullYear(),
+        date.getUTCMonth(),
+        date.getUTCDate()
+    ))
+    let dayOfWeek = dayStart.getUTCDay() || 7 // Convert Sunday (0) to 7
+    weekStart.setUTCDate(weekStart.getUTCDate() - dayOfWeek + 1) // Move to Monday
 
-
-    const daysDifference = (target.getTime() - firstDayOfYear.getTime()) / 86400000;
-    const weekNumber = (daysDifference + 1) / 7;
-    let weekStr = `${year}-W${weekNumber.toString().padStart(2, '0')}`
-
-    return new DateInfo(dateStr, weekStr, monthStr, timestamp)
+    return new DateInfo(
+        timestamp,
+        BigInt.fromI64(dayStart.getTime() / 1000),
+        BigInt.fromI64(weekStart.getTime() / 1000),
+        BigInt.fromI64(monthStart.getTime() / 1000)
+    )
 }
 
 function getOrCreateDailyResourceUsage(
@@ -44,7 +52,7 @@ function getOrCreateDailyResourceUsage(
     providerId: string,
     dateInfo: DateInfo
 ): DailyResourceUsage {
-    let id = `${appId}-${peerId}-${providerId}-${dateInfo.date}`
+    let id = `${appId}-${peerId}-${providerId}-${dateInfo.dayTimestamp.toString()}`
     let usage = DailyResourceUsage.load(id)
 
     if (usage == null) {
@@ -52,7 +60,7 @@ function getOrCreateDailyResourceUsage(
         usage.app = appId
         usage.peer = peerId
         usage.provider = providerId
-        usage.dateKey = dateInfo.date
+        usage.dateKey = dateInfo.dayTimestamp
         usage.timestamp = dateInfo.timestamp
         usage.totalCpu = BigInt.fromI32(0)
         usage.totalGpu = BigInt.fromI32(0)
@@ -73,7 +81,7 @@ function getOrCreateWeeklyResourceUsage(
     providerId: string,
     dateInfo: DateInfo
 ): WeeklyResourceUsage {
-    let id = `${appId}-${peerId}-${providerId}-${dateInfo.week}`
+    let id = `${appId}-${peerId}-${providerId}-${dateInfo.weekTimestamp.toString()}`
     let usage = WeeklyResourceUsage.load(id)
 
     if (usage == null) {
@@ -81,7 +89,7 @@ function getOrCreateWeeklyResourceUsage(
         usage.app = appId
         usage.peer = peerId
         usage.provider = providerId
-        usage.dateKey = dateInfo.week
+        usage.dateKey = dateInfo.weekTimestamp
         usage.timestamp = dateInfo.timestamp
         usage.totalCpu = BigInt.fromI32(0)
         usage.totalGpu = BigInt.fromI32(0)
@@ -102,7 +110,7 @@ function getOrCreateMonthlyResourceUsage(
     providerId: string,
     dateInfo: DateInfo
 ): MonthlyResourceUsage {
-    let id = `${appId}-${peerId}-${providerId}-${dateInfo.month}`
+    let id = `${appId}-${peerId}-${providerId}-${dateInfo.monthTimestamp.toString()}`
     let usage = MonthlyResourceUsage.load(id)
 
     if (usage == null) {
@@ -110,7 +118,7 @@ function getOrCreateMonthlyResourceUsage(
         usage.app = appId
         usage.peer = peerId
         usage.provider = providerId
-        usage.dateKey = dateInfo.month
+        usage.dateKey = dateInfo.monthTimestamp
         usage.timestamp = dateInfo.timestamp
         usage.totalCpu = BigInt.fromI32(0)
         usage.totalGpu = BigInt.fromI32(0)

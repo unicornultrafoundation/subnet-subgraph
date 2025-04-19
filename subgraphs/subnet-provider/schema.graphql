@@ -113,7 +113,7 @@ type DailyResourceUsage @entity {
   app: App! @index
   peer: Peer! @index
   provider: Provider! @index
-  dateKey: String! @index # Format: YYYY-MM-DD
+  dateKey: BigInt! @index # Timestamp at 00:00:00 UTC of the day
   timestamp: BigInt!
   totalCpu: BigInt!
   totalGpu: BigInt!
@@ -130,7 +130,7 @@ type WeeklyResourceUsage @entity {
   app: App! @index
   peer: Peer! @index
   provider: Provider! @index
-  dateKey: String! @index # Format: YYYY-Www
+  dateKey: BigInt! @index # Timestamp at 00:00:00 UTC of Monday
   timestamp: BigInt!
   totalCpu: BigInt!
   totalGpu: BigInt!
@@ -147,7 +147,7 @@ type MonthlyResourceUsage @entity {
   app: App! @index
   peer: Peer! @index
   provider: Provider! @index
-  dateKey: String! @index # Format: YYYY-MM
+  dateKey: BigInt! @index # Timestamp at 00:00:00 UTC of first day of month
   timestamp: BigInt!
   totalCpu: BigInt!
   totalGpu: BigInt!
