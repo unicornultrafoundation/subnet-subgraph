@@ -1,0 +1,1277 @@
+[
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "target",
+          "type": "address"
+        }
+      ],
+      "name": "AddressEmptyCode",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "AddressInsufficientBalance",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "FailedInnerCall",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidInitialization",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "NotInitializing",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableInvalidOwner",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableUnauthorizedAccount",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ReentrancyGuardReentrantCall",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        }
+      ],
+      "name": "SafeERC20FailedOperation",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "clusterId",
+          "type": "uint256"
+        }
+      ],
+      "name": "ClusterInactive",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "clusterId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "nodeIp",
+          "type": "uint256"
+        }
+      ],
+      "name": "ClusterNodeRemoved",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "clusterId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256[]",
+          "name": "newNodeIps",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "ClusterNodesAdded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "minDuration",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "percent",
+          "type": "uint256"
+        }
+      ],
+      "name": "DiscountAdded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint64",
+          "name": "version",
+          "type": "uint64"
+        }
+      ],
+      "name": "Initialized",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOperator",
+          "type": "address"
+        }
+      ],
+      "name": "OperatorUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "orderId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        }
+      ],
+      "name": "OrderCanceled",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "orderId",
+          "type": "uint256"
+        }
+      ],
+      "name": "OrderConfirmed",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "orderId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "price",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "discountPrice",
+          "type": "uint256"
+        }
+      ],
+      "name": "OrderCreated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "orderId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "additionalDuration",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "additionalPrice",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "discountPrice",
+          "type": "uint256"
+        }
+      ],
+      "name": "OrderExtended",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "orderId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "gpu",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "cpu",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "memoryBytes",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "disk",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "network",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "totalPrice",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "discountPrice",
+          "type": "uint256"
+        }
+      ],
+      "name": "OrderScaled",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "gpu",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "cpu",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "memoryBytes",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "disk",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "network",
+          "type": "uint256"
+        }
+      ],
+      "name": "ResourcePriceUpdated",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "minDuration",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "percent",
+          "type": "uint256"
+        }
+      ],
+      "name": "addDiscount",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "clusterId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "newNodeIps",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "addNodesToCluster",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "nodeIp1",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "nodeIp2",
+          "type": "uint256"
+        }
+      ],
+      "name": "areNodesInAnySameCluster",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "sameCluster",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "orderId",
+          "type": "uint256"
+        }
+      ],
+      "name": "cancelOrder",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "clusters",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "orderId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "active",
+          "type": "bool"
+        },
+        {
+          "internalType": "uint256",
+          "name": "expiration",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "renter",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "renterIp",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "ip",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "gpu",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "cpu",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "memoryBytes",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "disk",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "network",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "orderId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "nodeIps",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "confirmOrder",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "orderId",
+          "type": "uint256"
+        }
+      ],
+      "name": "confirmScaleOrder",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "ip",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "gpu",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "cpu",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "memoryBytes",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "disk",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "network",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "rentalDuration",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "maxPrice",
+          "type": "uint256"
+        }
+      ],
+      "name": "createOrder",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "discounts",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "minDuration",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "percent",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "clusterId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "additionalDuration",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "maxPrice",
+          "type": "uint256"
+        }
+      ],
+      "name": "extend",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "clusterId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getCluster",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "orderId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "nodeIps",
+              "type": "uint256[]"
+            },
+            {
+              "internalType": "bool",
+              "name": "active",
+              "type": "bool"
+            },
+            {
+              "internalType": "uint256",
+              "name": "expiration",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "renter",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "renterIp",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "ip",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "gpu",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "cpu",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "memoryBytes",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "disk",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "network",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct SubnetClusterMarket.Cluster",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "nodeIp",
+          "type": "uint256"
+        }
+      ],
+      "name": "getClustersOfNode",
+      "outputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "clusterIds",
+          "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "rentalDuration",
+          "type": "uint256"
+        }
+      ],
+      "name": "getDiscountPercent",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "clusterIds",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "inactiveExpiredClusters",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_initialOwner",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_operator",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_gpuPrice",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_cpuPrice",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_memoryBytesPrice",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_diskPrice",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_networkPrice",
+          "type": "uint256"
+        }
+      ],
+      "name": "initialize",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "nextClusterId",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "nextOrderId",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "nodeIpToClusterIds",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "operator",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "orders",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "internalType": "enum SubnetClusterMarket.OrderStatus",
+          "name": "status",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint256",
+          "name": "ip",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "gpu",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "cpu",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "memoryBytes",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "disk",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "network",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "rentalDuration",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "paymentToken",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "clusterId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "paidAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "discountAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "enum SubnetClusterMarket.OrderType",
+          "name": "orderType",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "paymentToken",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "clusterId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "nodeIps",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "recreateCluster",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "clusterId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "nodeIp",
+          "type": "uint256"
+        }
+      ],
+      "name": "removeNodeFromCluster",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "clusterId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "nodeIps",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "removeNodesFromCluster",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "resourcePrice",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "gpu",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "cpu",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "memoryBytes",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "disk",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "network",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "clusterId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "gpu",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "cpu",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "memoryBytes",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "disk",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "network",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "maxPrice",
+          "type": "uint256"
+        }
+      ],
+      "name": "scale",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_operator",
+          "type": "address"
+        }
+      ],
+      "name": "setOperator",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        }
+      ],
+      "name": "setPaymentToken",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "gpu",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "cpu",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "memoryBytes",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "disk",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "network",
+          "type": "uint256"
+        }
+      ],
+      "name": "setResourcePrice",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "clusterId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "newIp",
+          "type": "uint256"
+        }
+      ],
+      "name": "updateClusterIp",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "index",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "minDuration",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "percent",
+          "type": "uint256"
+        }
+      ],
+      "name": "updateDiscount",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "withdrawFund",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+]
