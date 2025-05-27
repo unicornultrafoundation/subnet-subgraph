@@ -24,7 +24,7 @@ export function handleOrderCreated(event: OrderCreated): void {
   let user = User.load(userId)
   if (!user) {
     user = new User(userId)
-    user.address = event.params.user.toHexString()
+    user.address = userId
     user.save()
   }
 
@@ -68,7 +68,7 @@ function createOrUpdateClusterFromOrder(order: Order, eventAddress: Address, ord
   let orderCall = contract.orders(orderId)
   let clusterId = orderCall.getClusterId()
   let clusterCall = contract.getCluster(clusterId)
-  let clusterEntityId = clusterId.toHexString()
+  let clusterEntityId = clusterId.toString()
   let cluster = new Cluster(clusterEntityId)
   cluster.nodeIps = clusterCall.nodeIps
   cluster.active = clusterCall.active
@@ -86,8 +86,8 @@ function createOrUpdateClusterFromOrder(order: Order, eventAddress: Address, ord
 
 // Extend cluster expiration for Renew order
 function renewCluster(order: Order): void {
-  if (order.cluster) {
-    let cluster = Cluster.load(order.cluster)
+  if (order.cluster !== null) {
+    let cluster = Cluster.load(order.cluster as string)
     if (cluster) {
       cluster.expiration = cluster.expiration.plus(order.rentalDuration)
       cluster.save()
@@ -97,8 +97,8 @@ function renewCluster(order: Order): void {
 
 // Increase cluster resources for Upgrade order
 function upgradeCluster(order: Order): void {
-  if (order.cluster) {
-    let cluster = Cluster.load(order.cluster)
+  if (order.cluster !== null) {
+    let cluster = Cluster.load(order.cluster as string)
     if (cluster) {
       cluster.gpu = cluster.gpu.plus(order.gpu)
       cluster.cpu = cluster.cpu.plus(order.cpu)
@@ -112,7 +112,7 @@ function upgradeCluster(order: Order): void {
 
 // Handle OrderConfirmed event
 export function handleOrderConfirmed(event: OrderConfirmed): void {
-  let orderId = event.params.orderId.toHex()
+  let orderId = event.params.orderId.toString()
   let order = Order.load(orderId)
   if (order) {
     order.status = OrderStatus.Confirmed
@@ -137,7 +137,7 @@ export function handleOrderConfirmed(event: OrderConfirmed): void {
 
 // Handle ClusterNodeRemoved event: remove nodeIp from cluster.nodeIps
 export function handleClusterNodeRemoved(event: ClusterNodeRemoved): void {
-  let clusterId = event.params.clusterId.toHexString()
+  let clusterId = event.params.clusterId.toString()
   let nodeIp = event.params.nodeIp
 
   let cluster = Cluster.load(clusterId)
@@ -156,7 +156,7 @@ export function handleClusterNodeRemoved(event: ClusterNodeRemoved): void {
 
 // Handle ClusterNodesAdded event: add new nodeIps to cluster.nodeIps
 export function handleClusterNodesAdded(event: ClusterNodesAdded): void {
-  let clusterId = event.params.clusterId.toHexString()
+  let clusterId = event.params.clusterId.toString()
   let cluster = Cluster.load(clusterId)
   if (cluster) {
     let currentIps = cluster.nodeIps as BigInt[]
