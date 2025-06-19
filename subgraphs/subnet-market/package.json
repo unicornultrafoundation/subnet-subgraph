@@ -1,15 +1,15 @@
 {
-  "name": "subnet-cluster-market",
+  "name": "subnet-market",
   "version": "1.0.0",
   "private": true,
   "repository": "https://github.com/unicornultrafoundation/subnet-subgraph",
   "author": "U2U Subnet",
   "license": "GPL-3.0-or-later",
   "scripts": {
-    "create": "graph create --node http://localhost:8020 subnet/cluster-market",
+    "create": "graph create --node http://localhost:8020 subnet/market",
     "codegen": "graph  codegen subgraph.yaml",
     "build": "graph build subgraph.yaml",
-    "deploy": "graph deploy --ipfs http://localhost:5001 --node http://localhost:8020 subnet/cluster-market"
+    "deploy": "graph deploy --ipfs http://localhost:5001 --node http://localhost:8020 subnet/market"
   },
   "packageManager": "yarn@4.4.1"
 }

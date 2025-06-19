@@ -1,0 +1,157 @@
+type Order @entity {
+  id: ID!
+  name: String!
+  machineType: BigInt!
+  owner: Bytes!
+  status: String!
+  createdAt: BigInt!
+  duration: BigInt!
+  minBidPrice: BigInt!
+  maxBidPrice: BigInt!
+  acceptedBidPrice: BigInt
+  region: BigInt!
+  cpuCores: BigInt!
+  gpuCores: BigInt!
+  gpuMemory: BigInt!
+  memoryMB: BigInt!
+  diskGB: BigInt!
+  uploadMbps: BigInt!
+  downloadMbps: BigInt!
+  specs: String!
+  acceptedProvider: Provider
+  acceptedMachine: Machine
+  startAt: BigInt
+  expiredAt: BigInt
+  lastPaidAt: BigInt
+  bids: [Bid!]! @derivedFrom(field: "order")
+  transactionHash: Bytes!
+}
+
+type Bid @entity {
+  id: ID!
+  order: Order!
+  owner: Bytes!
+  pricePerSecond: BigInt!
+  status: String!
+  createdAt: BigInt!
+  provider: Provider!
+  machine: Machine!
+  bidIndex: BigInt!
+  transactionHash: Bytes!
+}
+
+type OrderExtension @entity {
+  id: ID!
+  order: Order!
+  additionalDuration: BigInt!
+  newExpiry: BigInt!
+  timestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type OrderClosedEvent @entity {
+  id: ID!
+  order: Order!
+  refundAmount: BigInt!
+  reason: String!
+  timestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+# Aggregate statistics
+type MarketStat @entity {
+  id: ID!
+  totalOrders: BigInt!
+  totalActiveBids: BigInt!
+  totalAcceptedBids: BigInt!
+  lastUpdated: BigInt!
+}
+
+type Provider @entity {
+  id: ID! # providerId
+  operator: Bytes! # address
+  owner: Bytes! # address from NFT owner
+  registered: Boolean!
+  reputation: BigInt!
+  machineCount: BigInt!
+  createdAt: BigInt!
+  updatedAt: BigInt!
+  totalStaked: BigInt!
+  pendingWithdrawals: BigInt!
+  slashedAmount: BigInt!
+  tokenId: BigInt!
+  metadata: String!
+  name: String
+  description: String
+  isSlashed: Boolean!
+  isActive: Boolean!
+  verified: Boolean!
+  machines: [Machine!]! @derivedFrom(field: "provider")
+  bids: [Bid!]! @derivedFrom(field: "provider") 
+  acceptedOrders: [Order!]! @derivedFrom(field: "acceptedProvider")
+}
+
+type Machine @entity {
+  id: ID! # providerId-machineId
+  name: String
+  description: String
+  overlayIp: String
+  host: String
+  publicIp: String
+  machineId: BigInt! # original machine ID
+  provider: Provider!
+  active: Boolean!
+  machineType: BigInt!
+  region: BigInt!
+  cpuCores: BigInt!
+  gpuCores: BigInt!
+  gpuMemory: BigInt!
+  memoryMB: BigInt!
+  diskGB: BigInt!
+  uploadSpeed: BigInt!
+  downloadSpeed: BigInt!
+  createdAt: BigInt!
+  updatedAt: BigInt!
+  removedAt: BigInt
+  unlockTime: BigInt
+  stakeAmount: BigInt!
+  withdrawalProcessed: Boolean!
+  metadata: String!
+  cpuPricePerSecond: BigInt!
+  gpuPricePerSecond: BigInt!
+  memoryPricePerSecond: BigInt!
+  diskPricePerSecond: BigInt!
+  bids: [Bid!]! @derivedFrom(field: "machine")
+  acceptedOrders: [Order!]! @derivedFrom(field: "acceptedMachine")
+}
+
+type StakeTransaction @entity {
+  id: ID!
+  provider: Provider!
+  machine: Machine
+  amount: BigInt!
+  timestamp: BigInt!
+  transactionType: String! # "ADDED", "WITHDRAWN", "SLASHED"
+  reason: String
+}
+
+type ProviderDailySnapshot @entity {
+  id: ID! # providerId-timestamp
+  provider: Provider!
+  timestamp: BigInt!
+  date: String!
+  machineCount: BigInt!
+  totalStaked: BigInt!
+  slashedAmount: BigInt!
+  reputation: BigInt!
+}
+
+type GlobalStats @entity {
+  id: ID!
+  totalProviders: BigInt!
+  totalMachines: BigInt!
+  totalStaked: BigInt!
+  totalSlashed: BigInt!
+  averageReputation: BigInt!
+  lastUpdatedAt: BigInt!
+}
